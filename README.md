@@ -1,4 +1,4 @@
-steam-artwo-background-dl
+steamcard-dl
 ===============================
 
 Python script which downloads all the steam card artworks and backgrounds from http://www.steamcardexchange.net/
@@ -14,3 +14,7 @@ Usage
 ```sh
 python steamcard-dl.py
 ```
+
+References
+===
+This script is based on [steamcard-dl](https://github.com/youdulayo/steamcard-dl) which doesn't work anymore.
