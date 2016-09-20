@@ -1,0 +1,8 @@
+tests/
+data/
+1/
+*.jpg
+*.png
+*.jpeg
+setup.py
+A-Train 9 V4.0
