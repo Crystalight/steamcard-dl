@@ -9,6 +9,7 @@ import os
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
 try:
     os.mkdir("data")
+    os.chdir("data")
 except Exception as e:
     os.chdir("data")
 
@@ -27,16 +28,17 @@ def downloadImage(gameName, imageName, url, fType):
     if fType == "card":
         imageName = imageName[:imageName.find("- Series")-1]
         file_name = u"{0} [Cards] - {1}{2}".format(gameName, imageName.lstrip(), url[url.rfind("."):])
+        #i = 0
+        #while os.path.isfile(file_name):
+        #    i += 1
+        #    file_name = u"{0} [Cards] - {1} [{2}]{3}".format(gameName, imageName.lstrip(), i, url[url.rfind("."):])
 
     else: # fType == bg
         imageName = imageName[:imageName.find("- Type:")-1]
         file_name = u"{0} [Backgrounds] - {1}".format(gameName, imageName.lstrip())
         isBg = True
 
-    #adjustFileNameToWinOS(file_name)
-    deletechars = u'\/:*?"<>|*'
-    for c in deletechars:
-        file_name = file_name.replace(c,u'')
+    file_name = adjustFileNameToWinOS(file_name)
 
     u = opener.open(url)
     f = open(file_name, 'wb')
@@ -60,11 +62,14 @@ def downloadImage(gameName, imageName, url, fType):
 
     f.close()
 
-    #print "\n"
-
     if isBg:
         bgFileType = imghdr.what(file_name)
-        os.rename(file_name, file_name + u".{0}".format(bgFileType))
+        i = 0
+        file_name_new = file_name
+        while os.path.isfile(file_name_new + u".{0}".format(bgFileType)):
+            i += 1
+            file_name_new = file_name + u" [{0}]".format(i)
+        os.rename(file_name, file_name_new + u".{0}".format(bgFileType))
 
 
 def main():
@@ -91,14 +96,14 @@ def main():
             gamesDict[name] = gameLink.get("href")
 
     temp = sorted(gamesDict.keys())
-    start_index = temp.index('Blackwell Epiphany')
+    start_index = temp.index('Deponia')
     cropped_list = temp[start_index:]
     for key in cropped_list:
         # print "{0}: {1}".format(key.encode("utf-8"), gamesDict[key].encode("utf-8"))
         page = opener.open("http://www.steamcardexchange.net/" + gamesDict[key])
         soup = BeautifulSoup(page.read(),"html.parser")
 
-        # TODO: specify only "TRADING CARDS" section not to do the same work twice
+        # TODO: specify only "TRADING CARDS" section not to do the same work twice ("FOILS" have same artworks)
         cards = soup.findAll("a", {"rel":"lightbox-normal"})
 
         hdBgrounds = soup.findAll("a", {"rel":"lightbox-background"})
@@ -107,10 +112,8 @@ def main():
         alreadyDoneBgLinks = []
 
         for card in cards:
-            # This part is ugly...I'll clean it up later
             try:
                 hdImageLink = card.get("href")
-                #hdImageName = card.findAll("a")[1].get("title")# hdImageName = card.find("span", {"class":"card-name"}).text
                 hdImageName = card.get("title")
                 if not hdImageLink in alreadyDoneCardLinks:
                     downloadImage(key, hdImageName, hdImageLink, "card")
@@ -118,15 +121,15 @@ def main():
                     # print "hdImageLink = {0}".format(hdImageLink)
                     # print "hdImageName = {0}".format(hdImageName)
             except Exception as e:
-                print "Card ERROR {0}".format(str(e))
+                print "Card ERROR: {0}".format(str(e))
                 print key + " - " + hdImageName
-                #time.sleep(1)
+                if str(e) == "[Errno 28] No space left on device":
+                    sys.exit(1)
                 continue
 
         for hdBg in hdBgrounds:
             try:
                 hdBgLink = hdBg.get("href")
-                #hdBgName = hdBg.findAll("a")[2].get("title")# hdBgName = hdBg.find("span", {"class":"background-name"}).text
                 hdBgName = hdBg.get("title")
                 if not hdBgLink in alreadyDoneBgLinks:
                     downloadImage(key, hdBgName, hdBgLink, "bg")
@@ -134,7 +137,8 @@ def main():
             except Exception as e:
                 print "Background ERROR: {0}".format(str(e))
                 print key + " - " + hdBgName
-                #time.sleep(1)
+                if str(e) == "[Errno 28] No space left on device":
+                    sys.exit(1)
                 continue
 
 if __name__ == "__main__":

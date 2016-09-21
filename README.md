@@ -17,4 +17,4 @@ python steamcard-dl.py
 
 References
 ===
-This script is based on [steamcard-dl](https://github.com/youdulayo/steamcard-dl) which doesn't work anymore.
+This script is based on [youdulayo's](https://github.com/youdulayo) [steamcard-dl](https://github.com/youdulayo/steamcard-dl) which doesn't work anymore.
