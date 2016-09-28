@@ -65,13 +65,12 @@ def downloadImage(gameName, imageName, url, fType):
 
 
 def main():
+    logging.basicConfig(filename='Errors.log',format='%(asctime)s | %(levelname)s | %(message)s',level=logging.DEBUG)
     try:
         os.mkdir("data")
         os.chdir("data")
     except Exception as e:
         os.chdir("data")
-
-    logging.basicConfig(filename='Errors.log',format='%(asctime)s | %(levelname)s | %(message)s',level=logging.DEBUG)
 
     BASEURL = "http://www.steamcardexchange.net/index.php?showcase"
 

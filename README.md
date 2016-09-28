@@ -3,6 +3,8 @@ steamcard-dl
 
 Python script which downloads all available Steam card artworks and backgrounds from http://www.steamcardexchange.net/.
 
+All results are stored in the data folder created in the current script directory. Logfile with errors is included to see which images weren't downloaded properly.
+
 It should run without a problem on any system with Python 2.7, however it was tested only on Windows. In case you're getting troubles with installing any of the following packages, try using [Anaconda](https://www.continuum.io/downloads). It includes all of the needed packages from the box. 
 
 Requirements
